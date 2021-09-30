@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import MyInput from './UI/input/MyInput';
 import MyButton from './UI/button/MyButton';
+import { UseGlobalContext } from '../context';
 
 const PostForm = ({ createPost, posts }) => {
-  const [input, setInput] = useState({ title: '', body: '' });
-
+  const { input, setInput } = UseGlobalContext();
   const addNewPost = (e) => {
     e.preventDefault();
     if (input.title && input.body) {

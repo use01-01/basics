@@ -3,16 +3,12 @@ import './styles/app.css';
 import PostList from './components/PostList';
 import PostForm from './components/PostForm';
 import PostFilter from './components/PostFilter';
+import { UseGlobalContext } from './context';
 
 const App = () => {
-  const [posts, setPosts] = useState([
-    { id: 1, title: 'JavaScript', body: 'text01' },
-    { id: 2, title: 'JavaScript', body: 'text01' },
-    { id: 3, title: 'JavaScript', body: 'text01' },
-  ]);
-
+  const { posts, setPosts } = UseGlobalContext();
   const [filter, setFilter] = useState({ sort: '', queryTerm: '' });
-  console.log(filter);
+
   const sortedPosts = useMemo(() => {
     if (filter.sort) {
       return [...posts].sort((a, b) =>
@@ -23,11 +19,14 @@ const App = () => {
   }, [filter.sort, posts]);
 
   const sortedAndSearchedPost = useMemo(() => {
-    return sortedPosts.filter(
-      (post) =>
-        post.title.toLowerCase().includes(filter.queryTerm.toLowerCase()) ||
-        post.body.toLowerCase().includes(filter.queryTerm.toLowerCase())
-    );
+    if (filter.queryTerm) {
+      return sortedPosts.filter(
+        (post) =>
+          post.title.toLowerCase().includes(filter.queryTerm.toLowerCase()) ||
+          post.body.toLowerCase().includes(filter.queryTerm.toLowerCase())
+      );
+    }
+    return sortedPosts;
   }, [filter.queryTerm, sortedPosts]);
 
   const createPost = (newPost) => {
