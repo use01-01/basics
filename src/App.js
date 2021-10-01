@@ -1,36 +1,22 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import './styles/app.css';
 import PostList from './components/PostList';
 import PostForm from './components/PostForm';
 import PostFilter from './components/PostFilter';
 import { UseGlobalContext } from './context';
+import MyModal from './components/UI/MyModal/MyModal';
+import MyButton from './components/UI/button/MyButton';
+import { usePosts } from './hooks/usePosts';
 
 const App = () => {
   const { posts, setPosts } = UseGlobalContext();
   const [filter, setFilter] = useState({ sort: '', queryTerm: '' });
-
-  const sortedPosts = useMemo(() => {
-    if (filter.sort) {
-      return [...posts].sort((a, b) =>
-        a[filter.sort].localeCompare(b[filter.sort])
-      );
-    }
-    return posts;
-  }, [filter.sort, posts]);
-
-  const sortedAndSearchedPost = useMemo(() => {
-    if (filter.queryTerm) {
-      return sortedPosts.filter(
-        (post) =>
-          post.title.toLowerCase().includes(filter.queryTerm.toLowerCase()) ||
-          post.body.toLowerCase().includes(filter.queryTerm.toLowerCase())
-      );
-    }
-    return sortedPosts;
-  }, [filter.queryTerm, sortedPosts]);
+  const [modal, setModal] = useState(false);
+  const sortedAndSearchedPost = usePosts(posts, filter.sort, filter.queryTerm);
 
   const createPost = (newPost) => {
     setPosts([...posts, newPost]);
+    setModal(false);
   };
 
   const deletePost = (postId) => {
@@ -40,7 +26,12 @@ const App = () => {
 
   return (
     <div className="app">
-      <PostForm createPost={createPost} posts={posts} />
+      <MyButton style={{ marginTop: '30px' }} onClick={() => setModal(true)}>
+        создать запись
+      </MyButton>
+      <MyModal visible={modal} setVisible={setModal}>
+        <PostForm createPost={createPost} posts={posts} />
+      </MyModal>
       <hr style={{ margin: '15px 0' }} />
       <PostFilter filter={filter} setFilter={setFilter} />
       <PostList posts={sortedAndSearchedPost} deletePost={deletePost} />

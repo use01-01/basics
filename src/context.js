@@ -4,11 +4,7 @@ const AppContext = React.createContext();
 
 const AppProvider = ({ children }) => {
   const [input, setInput] = useState({ title: '', body: '' });
-  const [posts, setPosts] = useState([
-    { id: 1, title: 'JavaScript', body: 'text01' },
-    { id: 2, title: 'python', body: 'text02' },
-    { id: 3, title: 'C#', body: 'text03' },
-  ]);
+  const [posts, setPosts] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
   const [editingInput, setEditingInput] = useState({ term: '', idInput: '' });
   const [idItem, setIdItem] = useState('');

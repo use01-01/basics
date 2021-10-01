@@ -1,4 +1,5 @@
 import React from 'react';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { UseGlobalContext } from '../context';
 import PostItem from './PostItem';
 
@@ -17,11 +18,10 @@ const PostList = ({ posts, deletePost }) => {
   }
 
   const handleEditFn = (id) => {
-    console.log(editingInput);
     setIsEditing(true);
     setIdItem(id);
     let editingElement = posts.find((el) => el.id === id);
-    setEditingInput(editingElement.title);
+    setEditingInput({ ...editingInput, term: editingElement.title });
     if (isEditing && editingInput.term) {
       setPosts(
         posts.map((el) =>
@@ -40,17 +40,20 @@ const PostList = ({ posts, deletePost }) => {
       <h1
         style={{ textAlign: 'center' }}
       >{`найдено ${posts.length} постов`}</h1>
-      {posts.map((post, i) => {
-        return (
-          <PostItem
-            post={post}
-            key={post.id}
-            index={i}
-            deletePost={deletePost}
-            handleEditFn={handleEditFn}
-          />
-        );
-      })}
+      <TransitionGroup>
+        {posts.map((post, i) => {
+          return (
+            <CSSTransition key={post.id} timeout={500} classNames="post">
+              <PostItem
+                post={post}
+                index={i}
+                deletePost={deletePost}
+                handleEditFn={handleEditFn}
+              />
+            </CSSTransition>
+          );
+        })}
+      </TransitionGroup>
     </div>
   );
 };
